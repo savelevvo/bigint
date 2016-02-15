@@ -6,9 +6,8 @@ using std::endl;
 
 int main()
 {
-	
-	//std::stoi("s");
 
+	//std::stoi("s");
 
 	return 0;
 }

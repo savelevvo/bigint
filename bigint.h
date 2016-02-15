@@ -3,7 +3,8 @@
 #define _BIGINT_H
 
 #include<iostream>
-#include<vector>
+#include<algorithm>
+#include<deque>
 #include<string>
 
 class bigint
@@ -55,12 +56,15 @@ public:
 	bigint & operator++(int);
 	bigint & operator--();
 	bigint & operator--(int);
-
-	void itov(int);// int to vector
-	void stov(std::string);// string to vector
-
+		
 private:
-	std::vector<int> v;
+	std::deque<int> deq;
+
+	void itod(std::deque<int> &, int);// int to deque
+	void stod(const std::string &);// string to deque
+	void dtos(const std::deque<int> &);// deque to string
+	
+
 };
 
 bool operator== (const bigint &, int);
