@@ -56,6 +56,8 @@ public:
 	bigint & operator++(int);
 	bigint & operator--();
 	bigint & operator--(int);
+
+	int pop_back()const;
 		
 private:
 	std::deque<int> deq;
@@ -63,7 +65,7 @@ private:
 	void itod(std::deque<int> &, int);// int to deque
 	void stod(const std::string &);// string to deque
 	void dtos(const std::deque<int> &);// deque to string
-	
+	void align(std::deque<int> &, std::deque<int> &);
 
 };
 
