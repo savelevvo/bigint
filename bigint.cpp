@@ -219,11 +219,14 @@ bigint & bigint::operator--(int)
 }
 */
 
-int bigint::pop_back()const
+inline int bigint::operator[](int _val)const
 {
-	
-	std::deque<int>::reverse_iterator rit = deq.rbegin();
-	return *rit;
+	return deq[_val];
+}
+
+inline std::size_t bigint::size()const
+{
+	return deq.size();
 }
 
 void bigint::itod(std::deque<int> &_deq, int _val)
@@ -243,16 +246,21 @@ void bigint::stod(const std::string &_str)
 	itod(deq, tmp);
 }
 
-void bigint::dtos(const std::deque<int> &_deq)
+std::string & bigint::dtos(/*const std::deque<int> &_deq*/)const
 {
-
+	/*std::string tmp;
+	for (std::deque<int>::const_iterator it = deq.begin(); it != deq.end(); ++it)
+	{
+		tmp.push_back(*it);
+	}
+	return tmp;*/
 }
 
 void bigint::align(std::deque<int>&lhs, std::deque<int>&rhs)
 {
 	std::size_t lsz = lhs.size();
 	std::size_t rsz = rhs.size();
-
+	
 	if (lsz != rsz)
 	{
 		std::deque<int> *min = (lsz < rsz) ? &lhs : &rhs;
@@ -261,38 +269,42 @@ void bigint::align(std::deque<int>&lhs, std::deque<int>&rhs)
 		min->insert(min->begin(), (max->size() - min->size()), 0);// filling shortest deque with zeros
 	}
 }
-/*
+
 bool operator==(const bigint &lhs, int rhs)
 {
-	
-	return false;
+	std::string slhs = lhs.dtos();
+	std::string srhs = std::to_string(rhs);
+	return (slhs == srhs);
 }
 
 bool operator==(const bigint &lhs, const std::string &rhs)
 {
-	return false;
+	std::string slhs = lhs.dtos();
+	return (slhs == rhs);
 }
 
 bool operator== (const bigint &lhs, const bigint &rhs)
 {
-
+	std::string slhs = lhs.dtos();
+	std::string srhs = rhs.dtos();
+	return (slhs == srhs);
 }
 
 bool operator!= (const bigint &lhs, int rhs)
 {
-
+	return !(lhs == rhs);
 }
 
 bool operator!= (const bigint &lhs, const std::string &rhs)
 {
-
+	return !(lhs == rhs);
 }
 
 bool operator!= (const bigint &lhs, const bigint &rhs)
 {
-
+	return !(lhs == rhs);
 }
-
+/*
 std::istream & operator>>(std::istream &is, bigint &_val)
 {
 
@@ -300,9 +312,9 @@ std::istream & operator>>(std::istream &is, bigint &_val)
 */
 std::ostream & operator<<(std::ostream &os, const bigint &_val)
 {
-	/*std::deque<int>::iterator it;
-	for (it = deq.begin(); it != deq.end(); ++it)
-		os << *it << ",";
-	os << std::endl;*/
+	std::size_t dsz = _val.size();
+	for (std::size_t i = 0; i < dsz; ++i)
+		os << _val[i] << ",";
+
 	return os;
 }

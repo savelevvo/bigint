@@ -57,14 +57,16 @@ public:
 	bigint & operator--();
 	bigint & operator--(int);
 
-	int pop_back()const;
-		
+	inline int operator[](int)const;
+	inline std::size_t size()const;
+	std::string & dtos(/*const std::deque<int> &*/)const;// deque to string
+
 private:
 	std::deque<int> deq;
 
 	void itod(std::deque<int> &, int);// int to deque
 	void stod(const std::string &);// string to deque
-	void dtos(const std::deque<int> &);// deque to string
+	
 	void align(std::deque<int> &, std::deque<int> &);
 
 };
