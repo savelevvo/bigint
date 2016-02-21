@@ -113,22 +113,22 @@ bigint & bigint::operator+(int rhs)
 	itod(tmp, rhs);
 	align(deq, tmp);
 
-	short resid = 0;
-	short sum;
+	bool resid = false;
+	int sum;
 
-	for (std::deque<int>::reverse_iterator rit = deq.rbegin(); rit != deq.rend(); ++rit)
+	for (std::deque<int>::const_reverse_iterator rit = deq.rbegin(); rit != deq.rend(); ++rit)
 	{
 		sum = *rit + tmp.back();
 		tmp.pop_back();
 		if (resid)
 		{
 			++sum;
-			resid = 0;
+			resid = false;
 		}
 	
 		if (sum >= 10)
 		{
-			resid = 1;
+			resid = true;
 			res.push_front(sum % 10);
 			sum = 0;
 		} else
@@ -242,18 +242,24 @@ void bigint::itod(std::deque<int> &_deq, int _val)
 
 void bigint::stod(const std::string &_str)
 {
-	int tmp = std::stoi(_str);
-	itod(deq, tmp);
+	//itod(deq, std::stoi(_str));
+	//std::size_t len = _str.length();
+	
+	for (std::string::const_reverse_iterator crit = _str.rbegin(); crit != _str.rend(); ++crit)
+	{
+		
+		
+		
+	}
 }
 
-std::string & bigint::dtos(/*const std::deque<int> &_deq*/)const
+std::string & bigint::dtos()const
 {
-	/*std::string tmp;
+	std::string* tmp = new std::string;
 	for (std::deque<int>::const_iterator it = deq.begin(); it != deq.end(); ++it)
-	{
-		tmp.push_back(*it);
-	}
-	return tmp;*/
+		tmp->push_back(static_cast<char>(*it));
+	
+	return *tmp;
 }
 
 void bigint::align(std::deque<int>&lhs, std::deque<int>&rhs)

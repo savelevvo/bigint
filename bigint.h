@@ -59,7 +59,7 @@ public:
 
 	inline int operator[](int)const;
 	inline std::size_t size()const;
-	std::string & dtos(/*const std::deque<int> &*/)const;// deque to string
+	std::string & dtos()const;// deque to string
 
 private:
 	std::deque<int> deq;
