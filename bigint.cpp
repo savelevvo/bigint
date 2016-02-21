@@ -13,7 +13,7 @@ bigint::bigint(int _val)
 
 bigint::bigint(const std::string &_str)
 {
-	stod(_str);
+	stod(deq, _str);
 }
 
 bigint::bigint(const bigint &rhs)
@@ -36,7 +36,7 @@ bigint & bigint::operator=(int rhs)
 bigint & bigint::operator=(const std::string &rhs)
 {
 	deq.clear();
-	stod(rhs);
+	stod(deq, rhs);
 	return *this;
 }
 
@@ -229,6 +229,15 @@ inline std::size_t bigint::size()const
 	return deq.size();
 }
 
+std::string & bigint::dtos()const
+{
+	std::string* tmp = new std::string;
+	for (std::deque<int>::const_iterator it = deq.begin(); it != deq.end(); ++it)
+		tmp->push_back(static_cast<char>(*it));
+
+	return *tmp;
+}
+
 void bigint::itod(std::deque<int> &_deq, int _val)
 {
 	int dig;
@@ -240,26 +249,10 @@ void bigint::itod(std::deque<int> &_deq, int _val)
 	}
 }
 
-void bigint::stod(const std::string &_str)
+void bigint::stod(std::deque<int> &_deq, const std::string &_str)
 {
-	//itod(deq, std::stoi(_str));
-	//std::size_t len = _str.length();
-	
 	for (std::string::const_reverse_iterator crit = _str.rbegin(); crit != _str.rend(); ++crit)
-	{
-		
-		
-		
-	}
-}
-
-std::string & bigint::dtos()const
-{
-	std::string* tmp = new std::string;
-	for (std::deque<int>::const_iterator it = deq.begin(); it != deq.end(); ++it)
-		tmp->push_back(static_cast<char>(*it));
-	
-	return *tmp;
+		_deq.push_front(*crit - '0');
 }
 
 void bigint::align(std::deque<int>&lhs, std::deque<int>&rhs)
@@ -272,7 +265,8 @@ void bigint::align(std::deque<int>&lhs, std::deque<int>&rhs)
 		std::deque<int> *min = (lsz < rsz) ? &lhs : &rhs;
 		std::deque<int> *max = (lsz > rsz) ? &lhs : &rhs;
 
-		min->insert(min->begin(), (max->size() - min->size()), 0);// filling shortest deque with zeros
+		// filling shortest deque with zeros
+		min->insert(min->begin(), (max->size() - min->size()), 0);
 	}
 }
 

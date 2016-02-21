@@ -65,7 +65,7 @@ private:
 	std::deque<int> deq;
 
 	void itod(std::deque<int> &, int);// int to deque
-	void stod(const std::string &);// string to deque
+	void stod(std::deque<int> &, const std::string &);// string to deque
 	
 	void align(std::deque<int> &, std::deque<int> &);
 
