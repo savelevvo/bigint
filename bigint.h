@@ -71,13 +71,13 @@ private:
 
 };
 
-bool operator== (const bigint &, int);
-bool operator== (const bigint &, const std::string &);
-bool operator== (const bigint &, const bigint &);
+bool operator==(const bigint &, int);
+bool operator==(const bigint &, const std::string &);
+bool operator==(const bigint &, const bigint &);
 
-bool operator!= (const bigint &, int);
-bool operator!= (const bigint &, const std::string &);
-bool operator!= (const bigint &, const bigint &);
+bool operator!=(const bigint &, int);
+bool operator!=(const bigint &, const std::string &);
+bool operator!=(const bigint &, const bigint &);
 
 std::istream & operator>>(std::istream &, bigint &);
 std::ostream & operator<<(std::ostream &, const bigint &);

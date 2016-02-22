@@ -42,76 +42,77 @@ bigint & bigint::operator=(const std::string &rhs)
 
 bigint & bigint::operator=(const bigint &rhs)
 {
+	if (this == &rhs) return *this;
 	deq = rhs.deq;
 	return *this;
 }
-/*
+
 bigint & bigint::operator+=(int rhs)
 {
-
+	return *this + rhs;
 }
-
+/*
 bigint & bigint::operator+=(const std::string &rhs)
 {
-
+	return *this + rhs;
 }
 
 bigint & bigint::operator+=(const bigint &rhs)
 {
-
+	return *this + rhs;
 }
 
 bigint & bigint::operator-=(int rhs)
 {
-
+	return *this - rhs;
 }
 
 bigint & bigint::operator-=(const std::string &rhs)
 {
-
+	return *this - rhs;
 }
 
 bigint & bigint::operator-=(const bigint &rhs)
 {
-
+	return *this - rhs;
 }
 
 bigint & bigint::operator*=(int rhs)
 {
-
+	return *this * rhs;
 }
 
 bigint & bigint::operator*=(const std::string &rhs)
 {
-
+	return *this * rhs;
 }
 
 bigint & bigint::operator*=(const bigint &rhs)
 {
-
+	return *this * rhs;
 }
-
 
 bigint & bigint::operator/=(int rhs)
 {
-
+	return *this / rhs;
 }
 
 bigint & bigint::operator/=(const std::string &rhs)
 {
-
+	return *this / rhs;
 }
 
 bigint & bigint::operator/=(const bigint &rhs)
 {
-
+	return *this / rhs;
 }
 */
 bigint & bigint::operator+(int rhs)
 {
+	//if(rhs < 0) return operator-(rhs);
 	std::deque<int> tmp, res;
 	itod(tmp, rhs);
-	align(deq, tmp);
+	if(deq.size() != tmp.size()) align(deq, tmp);
 
 	bool resid = false;
 	int sum;
@@ -131,6 +132,7 @@ bigint & bigint::operator+(int rhs)
 			resid = true;
 			res.push_front(sum % 10);
 			sum = 0;
+			if (rit == (deq.rend() - 1)) res.push_front(1);
 		} else
 			res.push_front(sum);
 
@@ -148,7 +150,6 @@ bigint & bigint::operator+(const bigint &rhs)
 {
 	
 }
-
 
 bigint & bigint::operator-(int rhs)
 {
@@ -196,18 +197,20 @@ bigint & bigint::operator/(const bigint &rhs)
 {
 
 }
-
-
+*/
 bigint & bigint::operator++()
 {
-
+	return *this += 1;
 }
 
 bigint & bigint::operator++(int)
 {
+	bigint *tmp = new bigint(*this);
+	++(*this);
+	return *tmp;
 
 }
-
+/*
 bigint & bigint::operator--()
 {
 
@@ -218,7 +221,6 @@ bigint & bigint::operator--(int)
 
 }
 */
-
 inline int bigint::operator[](int _val)const
 {
 	return deq[_val];
@@ -232,8 +234,8 @@ inline std::size_t bigint::size()const
 std::string & bigint::dtos()const
 {
 	std::string* tmp = new std::string;
-	for (std::deque<int>::const_iterator it = deq.begin(); it != deq.end(); ++it)
-		tmp->push_back(static_cast<char>(*it));
+	for (std::deque<int>::const_iterator cit = deq.begin(); cit != deq.end(); ++cit)
+		tmp->push_back(*cit + '0');
 
 	return *tmp;
 }
@@ -255,19 +257,16 @@ void bigint::stod(std::deque<int> &_deq, const std::string &_str)
 		_deq.push_front(*crit - '0');
 }
 
-void bigint::align(std::deque<int>&lhs, std::deque<int>&rhs)
+void bigint::align(std::deque<int> &lhs, std::deque<int> &rhs)
 {
 	std::size_t lsz = lhs.size();
 	std::size_t rsz = rhs.size();
-	
-	if (lsz != rsz)
-	{
-		std::deque<int> *min = (lsz < rsz) ? &lhs : &rhs;
-		std::deque<int> *max = (lsz > rsz) ? &lhs : &rhs;
 
-		// filling shortest deque with zeros
-		min->insert(min->begin(), (max->size() - min->size()), 0);
-	}
+	std::deque<int> *min = (lsz < rsz) ? &lhs : &rhs;
+	std::deque<int> *max = (lsz > rsz) ? &lhs : &rhs;
+
+	// filling shortest deque with zeros
+	min->insert(min->begin(), (max->size() - min->size()), 0);
 }
 
 bool operator==(const bigint &lhs, int rhs)
@@ -285,6 +284,7 @@ bool operator==(const bigint &lhs, const std::string &rhs)
 
 bool operator== (const bigint &lhs, const bigint &rhs)
 {
+	if (&lhs == &rhs) return true;
 	std::string slhs = lhs.dtos();
 	std::string srhs = rhs.dtos();
 	return (slhs == srhs);
@@ -308,13 +308,14 @@ bool operator!= (const bigint &lhs, const bigint &rhs)
 std::istream & operator>>(std::istream &is, bigint &_val)
 {
 
+	return is;
 }
 */
 std::ostream & operator<<(std::ostream &os, const bigint &_val)
 {
 	std::size_t dsz = _val.size();
 	for (std::size_t i = 0; i < dsz; ++i)
-		os << _val[i] << ",";
+		os << _val[i];
 
 	return os;
 }
