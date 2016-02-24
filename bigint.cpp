@@ -26,6 +26,12 @@ bigint::~bigint()
 	deq.~deque();
 }
 
+bigint & bigint::operator=(const std::deque<int> &rhs)
+{
+	deq = rhs;
+	return *this;
+}
+
 bigint & bigint::operator=(int rhs)
 {
 	deq.clear();
@@ -47,11 +53,74 @@ bigint & bigint::operator=(const bigint &rhs)
 	return *this;
 }
 
+bigint & bigint::operator+(const std::deque<int> &rhs)
+{
+	std::deque<int> tmp(rhs), res;
+	if (deq.size() != rhs.size()) align(deq, tmp);
+
+	bool resid = false;
+	int sum;
+
+	for (std::deque<int>::const_reverse_iterator crit = deq.rbegin(); crit != deq.rend(); ++crit)
+	{
+		sum = *crit + tmp.back();
+		tmp.pop_back();
+		if (resid)
+		{
+			++sum;
+			resid = false;
+		}
+
+		if (sum >= 10)
+		{
+			resid = true;
+			res.push_front(sum % 10);
+			sum = 0;
+			if (crit == (deq.rend() - 1)) res.push_front(1);
+		}
+		else
+			res.push_front(sum);
+	}
+	deq = res;
+	return *this;
+}
+
+bigint & bigint::operator+(int rhs)
+{
+	std::deque<int> tmp;
+	itod(tmp, rhs);
+
+	return *this + tmp;
+}
+
+bigint & bigint::operator+(const std::string &rhs)
+{
+	std::deque<int> tmp;
+	stod(tmp, rhs);
+
+	return *this + tmp;
+}
+
+bigint & bigint::operator+(const bigint &rhs)
+{
+	std::deque<int> tmp;
+	std::size_t rsz = rhs.size();
+	for (std::size_t i = 0; i < rsz; ++i)
+		tmp.push_back(rhs[i]);
+
+	return *this + tmp;
+}
+
+bigint & bigint::operator+=(const std::deque<int> &rhs)
+{
+	return *this + rhs;
+}
+
 bigint & bigint::operator+=(int rhs)
 {
 	return *this + rhs;
 }
-/*
+
 bigint & bigint::operator+=(const std::string &rhs)
 {
 	return *this + rhs;
@@ -62,93 +131,22 @@ bigint & bigint::operator+=(const bigint &rhs)
 	return *this + rhs;
 }
 
-bigint & bigint::operator-=(int rhs)
+bigint & bigint::operator++()
 {
-	return *this - rhs;
+	return *this += 1;
 }
 
-bigint & bigint::operator-=(const std::string &rhs)
+bigint & bigint::operator++(int)
 {
-	return *this - rhs;
+	bigint *tmp = new bigint(*this);
+	++(*this);
+
+	return *tmp;
 }
 
-bigint & bigint::operator-=(const bigint &rhs)
-{
-	return *this - rhs;
-}
-
-bigint & bigint::operator*=(int rhs)
-{
-	return *this * rhs;
-}
-
-bigint & bigint::operator*=(const std::string &rhs)
-{
-	return *this * rhs;
-}
-
-bigint & bigint::operator*=(const bigint &rhs)
-{
-	return *this * rhs;
-}
-
-bigint & bigint::operator/=(int rhs)
-{
-	return *this / rhs;
-}
-
-bigint & bigint::operator/=(const std::string &rhs)
-{
-	return *this / rhs;
-}
-
-bigint & bigint::operator/=(const bigint &rhs)
-{
-	return *this / rhs;
-}
-*/
-bigint & bigint::operator+(int rhs)
-{
-	//if(rhs < 0) return operator-(rhs);
-	std::deque<int> tmp, res;
-	itod(tmp, rhs);
-	if(deq.size() != tmp.size()) align(deq, tmp);
-
-	bool resid = false;
-	int sum;
-
-	for (std::deque<int>::const_reverse_iterator rit = deq.rbegin(); rit != deq.rend(); ++rit)
-	{
-		sum = *rit + tmp.back();
-		tmp.pop_back();
-		if (resid)
-		{
-			++sum;
-			resid = false;
-		}
-	
-		if (sum >= 10)
-		{
-			resid = true;
-			res.push_front(sum % 10);
-			sum = 0;
-			if (rit == (deq.rend() - 1)) res.push_front(1);
-		} else
-			res.push_front(sum);
-
-	}
-	deq = res;
-	return *this;
-}
-/*
-bigint & bigint::operator+(const std::string &rhs)
+bigint & bigint::operator-(const std::deque<int> &rhs)
 {
 
-}
-
-bigint & bigint::operator+(const bigint &rhs)
-{
-	
 }
 
 bigint & bigint::operator-(int rhs)
@@ -166,6 +164,42 @@ bigint & bigint::operator-(const bigint &rhs)
 
 }
 
+bigint & bigint::operator-=(const std::deque<int> &rhs)
+{
+	return *this - rhs;
+}
+
+bigint & bigint::operator-=(int rhs)
+{
+	return *this - rhs;
+}
+
+bigint & bigint::operator-=(const std::string &rhs)
+{
+	return *this - rhs;
+}
+
+bigint & bigint::operator-=(const bigint &rhs)
+{
+	return *this - rhs;
+}
+
+bigint & bigint::operator--()
+{
+	return *this -= 1;
+}
+
+bigint & bigint::operator--(int)
+{
+	bigint *tmp = new bigint(*this);
+	--(*this);
+	return *tmp;
+}
+/*
+bigint & bigint::operator*(const std::deque<int> &rhs);
+{
+
+}
 
 bigint & bigint::operator*(int rhs)
 {
@@ -182,6 +216,30 @@ bigint & bigint::operator*(const bigint &rhs)
 
 }
 
+bigint & bigint::operator*=(const std::deque<int> &rhs);
+{
+	return *this * rhs;
+}
+
+bigint & bigint::operator*=(int rhs)
+{
+	return *this * rhs;
+}
+
+bigint & bigint::operator*=(const std::string &rhs)
+{
+	return *this * rhs;
+}
+
+bigint & bigint::operator*=(const bigint &rhs)
+{
+	return *this * rhs;
+}
+
+bigint & bigint::operator/(const std::deque<int> &)
+{
+
+}
 
 bigint & bigint::operator/(int rhs)
 {
@@ -197,28 +255,25 @@ bigint & bigint::operator/(const bigint &rhs)
 {
 
 }
-*/
-bigint & bigint::operator++()
-{
-	return *this += 1;
-}
 
-bigint & bigint::operator++(int)
-{
-	bigint *tmp = new bigint(*this);
-	++(*this);
-	return *tmp;
-
-}
-/*
-bigint & bigint::operator--()
+bigint & bigint::operator/=(const std::deque<int> &)
 {
 
 }
 
-bigint & bigint::operator--(int)
+bigint & bigint::operator/=(int rhs)
 {
+	return *this / rhs;
+}
 
+bigint & bigint::operator/=(const std::string &rhs)
+{
+	return *this / rhs;
+}
+
+bigint & bigint::operator/=(const bigint &rhs)
+{
+	return *this / rhs;
 }
 */
 inline int bigint::operator[](int _val)const
@@ -239,6 +294,9 @@ std::string & bigint::dtos()const
 
 	return *tmp;
 }
+
+
+/**** Private functions ****/
 
 void bigint::itod(std::deque<int> &_deq, int _val)
 {
@@ -268,6 +326,9 @@ void bigint::align(std::deque<int> &lhs, std::deque<int> &rhs)
 	// filling shortest deque with zeros
 	min->insert(min->begin(), (max->size() - min->size()), 0);
 }
+
+
+/**** Non-member functions ****/
 
 bool operator==(const bigint &lhs, int rhs)
 {
@@ -313,9 +374,5 @@ std::istream & operator>>(std::istream &is, bigint &_val)
 */
 std::ostream & operator<<(std::ostream &os, const bigint &_val)
 {
-	std::size_t dsz = _val.size();
-	for (std::size_t i = 0; i < dsz; ++i)
-		os << _val[i];
-
-	return os;
+	return os << _val.dtos();
 }

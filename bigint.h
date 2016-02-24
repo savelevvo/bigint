@@ -16,46 +16,56 @@ public:
 	bigint(const bigint &);
 	~bigint();
 	
+	bigint & operator=(const std::deque<int> &);
 	bigint & operator=(int);
 	bigint & operator=(const std::string &);
 	bigint & operator=(const bigint &);
 
-	bigint & operator+=(int);
-	bigint & operator+=(const std::string &);
-	bigint & operator+=(const bigint &);
-
-	bigint & operator-=(int);
-	bigint & operator-=(const std::string &);
-	bigint & operator-=(const bigint &);
-
-	bigint & operator*=(int);
-	bigint & operator*=(const std::string &);
-	bigint & operator*=(const bigint &);
-
-	bigint & operator/=(int);
-	bigint & operator/=(const std::string &);
-	bigint & operator/=(const bigint &);
-
+	bigint & operator+(const std::deque<int> &);
 	bigint & operator+(int);
 	bigint & operator+(const std::string &);
 	bigint & operator+(const bigint &);
 
+	bigint & operator+=(const std::deque<int> &);
+	bigint & operator+=(int);
+	bigint & operator+=(const std::string &);
+	bigint & operator+=(const bigint &);
+
+	bigint & operator++();
+	bigint & operator++(int);
+
+	bigint & operator-(const std::deque<int> &);
 	bigint & operator-(int);
 	bigint & operator-(const std::string &);
 	bigint & operator-(const bigint &);
-	
+
+	bigint & operator-=(const std::deque<int> &);
+	bigint & operator-=(int);
+	bigint & operator-=(const std::string &);
+	bigint & operator-=(const bigint &);
+
+	bigint & operator--();
+	bigint & operator--(int);
+
+	bigint & operator*(const std::deque<int> &);
 	bigint & operator*(int);
 	bigint & operator*(const std::string &);
 	bigint & operator*(const bigint &);
 
+	bigint & operator*=(const std::deque<int> &);
+	bigint & operator*=(int);
+	bigint & operator*=(const std::string &);
+	bigint & operator*=(const bigint &);
+
+	bigint & operator/(const std::deque<int> &);
 	bigint & operator/(int);
 	bigint & operator/(const std::string &);
 	bigint & operator/(const bigint &);
 
-	bigint & operator++();
-	bigint & operator++(int);
-	bigint & operator--();
-	bigint & operator--(int);
+	bigint & operator/=(const std::deque<int> &);
+	bigint & operator/=(int);
+	bigint & operator/=(const std::string &);
+	bigint & operator/=(const bigint &);
 
 	inline int operator[](int)const;
 	inline std::size_t size()const;
@@ -66,7 +76,6 @@ private:
 
 	void itod(std::deque<int> &, int);// int to deque
 	void stod(std::deque<int> &, const std::string &);// string to deque
-	
 	void align(std::deque<int> &, std::deque<int> &);
 
 };
