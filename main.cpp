@@ -8,14 +8,15 @@ int main()
 {
 	//todo: operator <, <=, >, >=
 	//		namespace
-	//		+(-x)
+	//		+(-x), negative numbers
 	//std::stoi("74");
 
-	bigint bi1(200), bi2(803);
-	std::deque<int> d = {4,0,0};
-
-	bi1 = d;
-	cout << bi1+d << endl;
+	bigint bi1(200), bi2(4);
+	std::deque<int> d = {5,0,0};
+	std::string s = "100";
+	
+	
+	cout << bi1 - s << endl;
 	
 	
 

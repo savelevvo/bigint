@@ -61,10 +61,9 @@ bigint & bigint::operator+(const std::deque<int> &rhs)
 	bool resid = false;
 	int sum;
 
-	for (std::deque<int>::const_reverse_iterator crit = deq.rbegin(); crit != deq.rend(); ++crit)
+	for (std::deque<int>::const_reverse_iterator lcrit = deq.rbegin(), rcrit = tmp.rbegin(); lcrit != deq.rend(); ++lcrit, ++rcrit)
 	{
-		sum = *crit + tmp.back();
-		tmp.pop_back();
+		sum = *lcrit + *rcrit;
 		if (resid)
 		{
 			++sum;
@@ -76,7 +75,7 @@ bigint & bigint::operator+(const std::deque<int> &rhs)
 			resid = true;
 			res.push_front(sum % 10);
 			sum = 0;
-			if (crit == (deq.rend() - 1)) res.push_front(1);
+			if (lcrit == (deq.rend() - 1)) res.push_front(1);
 		}
 		else
 			res.push_front(sum);
@@ -146,22 +145,71 @@ bigint & bigint::operator++(int)
 
 bigint & bigint::operator-(const std::deque<int> &rhs)
 {
+	std::deque<int> tmp(rhs), res;
+	if (deq.size() != rhs.size()) align(deq, tmp);
 
+	bool loan = false;
+	int diff;
+
+	for (std::deque<int>::reverse_iterator lrit = deq.rbegin(), rrit = tmp.rbegin(); lrit != deq.rend(); ++lrit, ++rrit)
+	{
+		if (loan)
+		{
+			--(*lrit);
+			loan = false;
+		}
+
+		if (*lrit < *rrit)
+		{
+			if (lrit == (deq.rend() - 1))
+				diff = *lrit - *rrit;
+			else
+			{
+				diff = (*lrit + 10) - *rrit;
+				loan = true;
+			}
+		}
+		else
+			diff = *lrit - *rrit;
+		
+		res.push_front(diff);
+	}
+
+	std::size_t zeros = 0;
+	for (std::deque<int>::iterator it = res.begin(); it != res.end(); ++it)
+	{
+		if (*it == 0) ++zeros;
+		else break;
+	}
+
+	deq.assign(res.begin() + zeros, res.end());
+	return *this;
 }
 
 bigint & bigint::operator-(int rhs)
 {
+	std::deque<int> tmp;
+	itod(tmp, rhs);
 
+	return *this - tmp;
 }
 
 bigint & bigint::operator-(const std::string &rhs)
 {
+	std::deque<int> tmp;
+	stod(tmp, rhs);
 
+	return *this - tmp;
 }
 
 bigint & bigint::operator-(const bigint &rhs)
 {
+	std::deque<int> tmp;
+	std::size_t rsz = rhs.size();
+	for (std::size_t i = 0; i < rsz; ++i)
+		tmp.push_back(rhs[i]);
 
+	return *this - tmp;
 }
 
 bigint & bigint::operator-=(const std::deque<int> &rhs)
@@ -290,7 +338,13 @@ std::string & bigint::dtos()const
 {
 	std::string* tmp = new std::string;
 	for (std::deque<int>::const_iterator cit = deq.begin(); cit != deq.end(); ++cit)
-		tmp->push_back(*cit + '0');
+		if(*cit >= 0)
+			tmp->push_back(*cit + '0');
+		else
+		{
+			tmp->push_back((*cit)*(-1) + '0');
+			tmp->insert(tmp->begin(), '-');
+		}
 
 	return *tmp;
 }
