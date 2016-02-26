@@ -145,7 +145,14 @@ bigint & bigint::operator++(int)
 
 bigint & bigint::operator-(const std::deque<int> &rhs)
 {
+	if (deq == rhs)
+	{
+		deq.clear();
+		deq.push_back(0);
+		return *this;
+	}
 	std::deque<int> tmp(rhs), res;
+	//if (deq < tmp) { deq.swap(tmp); }
 	if (deq.size() != rhs.size()) align(deq, tmp);
 
 	bool loan = false;
@@ -190,6 +197,12 @@ bigint & bigint::operator-(int rhs)
 {
 	std::deque<int> tmp;
 	itod(tmp, rhs);
+	if (deq == tmp)
+	{
+		deq.clear();
+		deq.push_back(0);
+		return *this;
+	}
 
 	return *this - tmp;
 }
@@ -198,12 +211,24 @@ bigint & bigint::operator-(const std::string &rhs)
 {
 	std::deque<int> tmp;
 	stod(tmp, rhs);
-
+	if (deq == tmp)
+	{
+		deq.clear();
+		deq.push_back(0);
+		return *this;
+	}
+	
 	return *this - tmp;
 }
 
 bigint & bigint::operator-(const bigint &rhs)
 {
+	if (this == &rhs)
+	{
+		deq.clear();
+		deq.push_back(0);
+		return *this;
+	}
 	std::deque<int> tmp;
 	std::size_t rsz = rhs.size();
 	for (std::size_t i = 0; i < rsz; ++i)
@@ -338,13 +363,11 @@ std::string & bigint::dtos()const
 {
 	std::string* tmp = new std::string;
 	for (std::deque<int>::const_iterator cit = deq.begin(); cit != deq.end(); ++cit)
-		if(*cit >= 0)
-			tmp->push_back(*cit + '0');
-		else
-		{
-			tmp->push_back((*cit)*(-1) + '0');
+	{
+		tmp->push_back(abs(*cit) + '0');
+		if (*cit < 0)
 			tmp->insert(tmp->begin(), '-');
-		}
+	}
 
 	return *tmp;
 }
@@ -366,7 +389,10 @@ void bigint::itod(std::deque<int> &_deq, int _val)
 void bigint::stod(std::deque<int> &_deq, const std::string &_str)
 {
 	for (std::string::const_reverse_iterator crit = _str.rbegin(); crit != _str.rend(); ++crit)
+	{
+		if (*crit == '-') { _deq.front() *= -1; continue; }
 		_deq.push_front(*crit - '0');
+	}
 }
 
 void bigint::align(std::deque<int> &lhs, std::deque<int> &rhs)
@@ -383,7 +409,12 @@ void bigint::align(std::deque<int> &lhs, std::deque<int> &rhs)
 
 
 /**** Non-member functions ****/
-
+/*
+bool operator==(const bigint &lhs, const std::deque<int> &rhs)
+{
+	
+}
+*/
 bool operator==(const bigint &lhs, int rhs)
 {
 	std::string slhs = lhs.dtos();
@@ -404,7 +435,12 @@ bool operator== (const bigint &lhs, const bigint &rhs)
 	std::string srhs = rhs.dtos();
 	return (slhs == srhs);
 }
+/*
+bool operator!=(const bigint &lhs, const std::deque<int> &rhs)
+{
 
+}
+*/
 bool operator!= (const bigint &lhs, int rhs)
 {
 	return !(lhs == rhs);
@@ -419,7 +455,89 @@ bool operator!= (const bigint &lhs, const bigint &rhs)
 {
 	return !(lhs == rhs);
 }
+
+bool operator<(const bigint &lhs, const std::deque<int> &rhs)
+{
+	if (lhs.size() != rhs.size()) return false;
+	// ...
+	return true;
+}
 /*
+bool operator<(const bigint &lhs, int rhs)
+{
+
+}
+
+bool operator<(const bigint &lhs, const std::string &rhs)
+{
+
+}
+
+bool operator<(const bigint &, const bigint &)
+{
+
+}
+
+bool operator<=(const bigint &lhs, const std::deque<int> &rhs)
+{
+
+}
+
+bool operator<=(const bigint &lhs, int rhs)
+{
+
+}
+
+bool operator<=(const bigint &lhs, const std::string &rhs)
+{
+
+}
+
+bool operator<=(const bigint &lhs, const bigint &rhs)
+{
+
+}
+
+bool operator>(const bigint &lhs, const std::deque<int> &rhs)
+{
+
+}
+
+bool operator>(const bigint &lhs, int rhs)
+{
+
+}
+
+bool operator>(const bigint &lhs, const std::string &rhs)
+{
+
+}
+
+bool operator>(const bigint &lhs, const bigint &rhs)
+{
+
+}
+
+bool operator>=(const bigint &lhs, const std::deque<int> &rhs)
+{
+
+}
+
+bool operator>=(const bigint &lhs, int rhs)
+{
+
+}
+
+bool operator>=(const bigint &lhs, const std::string &rhs)
+{
+
+}
+
+bool operator>=(const bigint &lhs, const bigint &rhs)
+{
+
+}
+
 std::istream & operator>>(std::istream &is, bigint &_val)
 {
 

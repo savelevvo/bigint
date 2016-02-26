@@ -9,14 +9,17 @@ int main()
 	//todo: operator <, <=, >, >=
 	//		namespace
 	//		+(-x), negative numbers
+	//		check() is number correct
 	//std::stoi("74");
 
-	bigint bi1(200), bi2(4);
-	std::deque<int> d = {5,0,0};
-	std::string s = "100";
+	bigint bi1(-500), bi2(100);
+	std::deque<int> d1 = { -2, 0 };
+	//std::deque<int> d2 = { 4, 9, 9 };
+	std::string s = "-123";
 	
+	bi1 = s;
 	
-	cout << bi1 - s << endl;
+	cout << bi1 << endl;
 	
 	
 

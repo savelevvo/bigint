@@ -3,9 +3,9 @@
 #define _BIGINT_H
 
 #include<iostream>
-#include<algorithm>
 #include<deque>
 #include<string>
+#include<stdlib.h>
 
 class bigint
 {
@@ -77,16 +77,38 @@ private:
 	void itod(std::deque<int> &, int);// int to deque
 	void stod(std::deque<int> &, const std::string &);// string to deque
 	void align(std::deque<int> &, std::deque<int> &);
-
+	
 };
 
+bool operator==(const bigint &, const std::deque<int> &);
 bool operator==(const bigint &, int);
 bool operator==(const bigint &, const std::string &);
 bool operator==(const bigint &, const bigint &);
 
+bool operator!=(const bigint &, const std::deque<int> &);
 bool operator!=(const bigint &, int);
 bool operator!=(const bigint &, const std::string &);
 bool operator!=(const bigint &, const bigint &);
+
+bool operator<(const bigint &, const std::deque<int> &);
+bool operator<(const bigint &, int);
+bool operator<(const bigint &, const std::string &);
+bool operator<(const bigint &, const bigint &);
+
+bool operator<=(const bigint &, const std::deque<int> &);
+bool operator<=(const bigint &, int);
+bool operator<=(const bigint &, const std::string &);
+bool operator<=(const bigint &, const bigint &);
+
+bool operator>(const bigint &, const std::deque<int> &);
+bool operator>(const bigint &, int);
+bool operator>(const bigint &, const std::string &);
+bool operator>(const bigint &, const bigint &);
+
+bool operator>=(const bigint &, const std::deque<int> &);
+bool operator>=(const bigint &, int);
+bool operator>=(const bigint &, const std::string &);
+bool operator>=(const bigint &, const bigint &);
 
 std::istream & operator>>(std::istream &, bigint &);
 std::ostream & operator<<(std::ostream &, const bigint &);
