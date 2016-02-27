@@ -12,16 +12,11 @@ int main()
 	//		check() is number correct
 	//std::stoi("74");
 
-	bigint bi1(-500), bi2(100);
-	std::deque<int> d1 = { -2, 0 };
-	//std::deque<int> d2 = { 4, 9, 9 };
+	bigint bi1(10), bi2(0);
+	std::deque<int> d1 = { 1, 0 };
 	std::string s = "-123";
 	
-	bi1 = s;
+	cout << (bi1 >= bi2)<< endl;
 	
-	cout << bi1 << endl;
-	
-	
-
 	return 0;
 }

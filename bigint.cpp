@@ -2,19 +2,15 @@
 
 bigint::bigint()
 	: deq()
-{
-	
-}
+{ }
 
 bigint::bigint(int _val)
-{
-	itod(deq, _val);
-}
+	: deq(to_deque(_val))
+{ }
 
 bigint::bigint(const std::string &_str)
-{
-	stod(deq, _str);
-}
+	: deq(to_deque(_str))
+{ }
 
 bigint::bigint(const bigint &rhs)
 {
@@ -35,14 +31,14 @@ bigint & bigint::operator=(const std::deque<int> &rhs)
 bigint & bigint::operator=(int rhs)
 {
 	deq.clear();
-	itod(deq, rhs);
+	deq = to_deque(rhs);
 	return *this;
 }
 
 bigint & bigint::operator=(const std::string &rhs)
 {
 	deq.clear();
-	stod(deq, rhs);
+	deq = to_deque(rhs);
 	return *this;
 }
 
@@ -87,7 +83,7 @@ bigint & bigint::operator+(const std::deque<int> &rhs)
 bigint & bigint::operator+(int rhs)
 {
 	std::deque<int> tmp;
-	itod(tmp, rhs);
+	tmp = to_deque(rhs);
 
 	return *this + tmp;
 }
@@ -95,7 +91,7 @@ bigint & bigint::operator+(int rhs)
 bigint & bigint::operator+(const std::string &rhs)
 {
 	std::deque<int> tmp;
-	stod(tmp, rhs);
+	tmp = to_deque(rhs);
 
 	return *this + tmp;
 }
@@ -196,7 +192,7 @@ bigint & bigint::operator-(const std::deque<int> &rhs)
 bigint & bigint::operator-(int rhs)
 {
 	std::deque<int> tmp;
-	itod(tmp, rhs);
+	tmp = to_deque(rhs);
 	if (deq == tmp)
 	{
 		deq.clear();
@@ -210,7 +206,7 @@ bigint & bigint::operator-(int rhs)
 bigint & bigint::operator-(const std::string &rhs)
 {
 	std::deque<int> tmp;
-	stod(tmp, rhs);
+	tmp = to_deque(rhs);
 	if (deq == tmp)
 	{
 		deq.clear();
@@ -359,10 +355,10 @@ inline std::size_t bigint::size()const
 	return deq.size();
 }
 
-std::string & bigint::dtos()const
+std::string & bigint::dtos(const std::deque<int> &_deq)const
 {
 	std::string* tmp = new std::string;
-	for (std::deque<int>::const_iterator cit = deq.begin(); cit != deq.end(); ++cit)
+	for (std::deque<int>::const_iterator cit = _deq.begin(); cit != _deq.end(); ++cit)
 	{
 		tmp->push_back(abs(*cit) + '0');
 		if (*cit < 0)
@@ -375,24 +371,30 @@ std::string & bigint::dtos()const
 
 /**** Private functions ****/
 
-void bigint::itod(std::deque<int> &_deq, int _val)
+std::deque<int> & bigint::to_deque(int _val)const
 {
+	std::deque<int>* tmp = new std::deque<int>;
 	int dig;
 	while (_val != 0)
 	{
 		dig = _val % 10;
 		_val = _val / 10;
-		_deq.push_front(dig);
+		tmp->push_front(dig);
 	}
+	
+	return *tmp;
 }
 
-void bigint::stod(std::deque<int> &_deq, const std::string &_str)
+std::deque<int> & bigint::to_deque(const std::string &_str)const
 {
+	std::deque<int>* tmp = new std::deque<int>;
 	for (std::string::const_reverse_iterator crit = _str.rbegin(); crit != _str.rend(); ++crit)
 	{
-		if (*crit == '-') { _deq.front() *= -1; continue; }
-		_deq.push_front(*crit - '0');
+		if (*crit == '-') { tmp->front() *= -1; continue; }
+		tmp->push_front(*crit - '0');
 	}
+
+	return *tmp;
 }
 
 void bigint::align(std::deque<int> &lhs, std::deque<int> &rhs)
@@ -409,38 +411,40 @@ void bigint::align(std::deque<int> &lhs, std::deque<int> &rhs)
 
 
 /**** Non-member functions ****/
-/*
+
 bool operator==(const bigint &lhs, const std::deque<int> &rhs)
 {
-	
+	std::string slhs = lhs.dtos(lhs.deq);
+	std::string srhs = lhs.dtos(rhs);
+	return (slhs == srhs);
 }
-*/
+
 bool operator==(const bigint &lhs, int rhs)
 {
-	std::string slhs = lhs.dtos();
+	std::string slhs = lhs.dtos(lhs.deq);
 	std::string srhs = std::to_string(rhs);
 	return (slhs == srhs);
 }
 
 bool operator==(const bigint &lhs, const std::string &rhs)
 {
-	std::string slhs = lhs.dtos();
+	std::string slhs = lhs.dtos(lhs.deq);
 	return (slhs == rhs);
 }
 
 bool operator== (const bigint &lhs, const bigint &rhs)
 {
 	if (&lhs == &rhs) return true;
-	std::string slhs = lhs.dtos();
-	std::string srhs = rhs.dtos();
+	std::string slhs = lhs.dtos(lhs.deq);
+	std::string srhs = rhs.dtos(lhs.deq);
 	return (slhs == srhs);
 }
-/*
+
 bool operator!=(const bigint &lhs, const std::deque<int> &rhs)
 {
-
+	return !(lhs == rhs);
 }
-*/
+
 bool operator!= (const bigint &lhs, int rhs)
 {
 	return !(lhs == rhs);
@@ -458,86 +462,96 @@ bool operator!= (const bigint &lhs, const bigint &rhs)
 
 bool operator<(const bigint &lhs, const std::deque<int> &rhs)
 {
-	if (lhs.size() != rhs.size()) return false;
-	// ...
-	return true;
+	if (lhs.size() != rhs.size()) return lhs.size() < rhs.size();
+	if (lhs[0] != rhs.front()) return lhs[0] < rhs.front();
+	
+	std::deque<int>::const_iterator cit = rhs.begin() + 1;
+	int i = 1;
+	for (; cit != rhs.end(); ++cit, ++i)
+		if (lhs[i] != *cit)	return lhs[i] < *cit;
+	
+	return false;
 }
-/*
+
 bool operator<(const bigint &lhs, int rhs)
 {
+	std::deque<int> tmp = lhs.to_deque(rhs);
 
+	return (lhs < tmp);
 }
 
 bool operator<(const bigint &lhs, const std::string &rhs)
 {
+	std::deque<int> tmp = lhs.to_deque(rhs);
 
+	return (lhs < tmp);
 }
 
-bool operator<(const bigint &, const bigint &)
+bool operator<(const bigint &lhs, const bigint &rhs)
 {
-
+	return (lhs < rhs.deq);
 }
 
 bool operator<=(const bigint &lhs, const std::deque<int> &rhs)
 {
-
+	return (lhs < rhs || lhs == rhs);
 }
 
 bool operator<=(const bigint &lhs, int rhs)
 {
-
+	return (lhs < rhs || lhs == rhs);
 }
 
 bool operator<=(const bigint &lhs, const std::string &rhs)
 {
-
+	return (lhs < rhs || lhs == rhs);
 }
 
 bool operator<=(const bigint &lhs, const bigint &rhs)
 {
-
+	return (lhs < rhs || lhs == rhs);
 }
 
 bool operator>(const bigint &lhs, const std::deque<int> &rhs)
 {
-
+	return !(lhs <= rhs);
 }
 
 bool operator>(const bigint &lhs, int rhs)
 {
-
+	return !(lhs <= rhs);
 }
 
 bool operator>(const bigint &lhs, const std::string &rhs)
 {
-
+	return !(lhs <= rhs);
 }
 
 bool operator>(const bigint &lhs, const bigint &rhs)
 {
-
+	return !(lhs <= rhs);
 }
 
 bool operator>=(const bigint &lhs, const std::deque<int> &rhs)
 {
-
+	return !(lhs < rhs);
 }
 
 bool operator>=(const bigint &lhs, int rhs)
 {
-
+	return !(lhs < rhs);
 }
 
 bool operator>=(const bigint &lhs, const std::string &rhs)
 {
-
+	return !(lhs < rhs);
 }
 
 bool operator>=(const bigint &lhs, const bigint &rhs)
 {
-
+	return !(lhs < rhs);
 }
-
+/*
 std::istream & operator>>(std::istream &is, bigint &_val)
 {
 
@@ -546,5 +560,5 @@ std::istream & operator>>(std::istream &is, bigint &_val)
 */
 std::ostream & operator<<(std::ostream &os, const bigint &_val)
 {
-	return os << _val.dtos();
+	return os << _val.dtos(_val.deq);
 }

@@ -9,6 +9,15 @@
 
 class bigint
 {
+	friend bool operator==(const bigint &, const std::deque<int> &);
+	friend bool operator==(const bigint &, int);
+	friend bool operator==(const bigint &, const std::string &);
+	friend bool operator==(const bigint &, const bigint &);
+	friend bool operator<(const bigint &, int);
+	friend bool operator<(const bigint &, const std::string &);
+	friend bool operator<(const bigint &, const bigint &);
+	friend std::ostream & operator<<(std::ostream &, const bigint &);
+
 public:
 	bigint();
 	bigint(int);
@@ -69,13 +78,14 @@ public:
 
 	inline int operator[](int)const;
 	inline std::size_t size()const;
-	std::string & dtos()const;// deque to string
 
 private:
 	std::deque<int> deq;
 
-	void itod(std::deque<int> &, int);// int to deque
-	void stod(std::deque<int> &, const std::string &);// string to deque
+	std::deque<int> & to_deque(int)const;
+	std::deque<int> & to_deque(const std::string &)const;
+	std::string & dtos(const std::deque<int> &)const;// deque to string
+
 	void align(std::deque<int> &, std::deque<int> &);
 	
 };
