@@ -147,13 +147,18 @@ bigint & bigint::operator-(const std::deque<int> &rhs)
 		deq.push_back(0);
 		return *this;
 	}
-	std::deque<int> tmp(rhs), res;
-	//if (deq < tmp) { deq.swap(tmp); }
-	if (deq.size() != rhs.size()) align(deq, tmp);
 
-	bool loan = false;
+	std::deque<int> tmp(rhs), res;
+	bool loan = false, negative = false;
 	int diff;
 
+	if (deq.size() != rhs.size()) align(deq, tmp);
+	if (*this < tmp)
+	{
+		deq.swap(tmp);
+		negative = true;
+	}
+	
 	for (std::deque<int>::reverse_iterator lrit = deq.rbegin(), rrit = tmp.rbegin(); lrit != deq.rend(); ++lrit, ++rrit)
 	{
 		if (loan)
@@ -186,6 +191,7 @@ bigint & bigint::operator-(const std::deque<int> &rhs)
 	}
 
 	deq.assign(res.begin() + zeros, res.end());
+	if (negative) deq.front() *= -1;
 	return *this;
 }
 

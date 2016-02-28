@@ -8,15 +8,17 @@ int main()
 {
 	//todo: operator <, <=, >, >=
 	//		namespace
-	//		+(-x), negative numbers
 	//		check() is number correct
 	//std::stoi("74");
 
-	bigint bi1(10), bi2(0);
-	std::deque<int> d1 = { 1, 0 };
+	bigint bi1(1), bi2(150);
+	std::deque<int> d1 = { 1 };
+	std::deque<int> d2 = { 2, 0 };
 	std::string s = "-123";
 	
-	cout << (bi1 >= bi2)<< endl;
+
+
+	cout << (bi1 - bi2) << endl;
 	
 	return 0;
 }
