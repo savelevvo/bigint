@@ -270,12 +270,76 @@ bigint & bigint::operator--(int)
 	--(*this);
 	return *tmp;
 }
-/*
-bigint & bigint::operator*(const std::deque<int> &rhs);
-{
 
+
+std::deque<int> bigint::naive_mul(const std::deque<int>& x, const std::deque<int>& y) 
+{
+	auto len = x.size();
+	std::deque<int> res(2 * len);
+
+	for (auto i = 0; i < len; ++i) {
+		for (auto j = 0; j < len; ++j) {
+			res[i + j] += x[i] * y[j];
+		}
+	}
+
+	return res;
 }
 
+std::deque<int> bigint::karatsuba_mul(const std::deque<int> &lhs, const std::deque<int> &rhs)
+{
+	std::size_t n = (lhs.size() > rhs.size()) ? lhs.size() : rhs.size();
+	auto len = lhs.size(); 
+	
+	if (len <= 1)
+		 return naive_mul(lhs, rhs);
+
+	
+	int k = len / 2;
+
+	std::deque<int> res(2 * len);
+	std::deque<int> Xl, Xr, Yl, Yr;
+	std::deque<int> P1, P2, P3;
+	std::deque<int> Xlr(k), Ylr(k);
+
+	Xr.assign(lhs.begin() + k, lhs.end());
+	Xl.assign(lhs.begin(), lhs.begin() + k);
+	Yr.assign(rhs.begin() + k, rhs.end());
+	Yl.assign(rhs.begin(), rhs.begin() + k);
+	
+	
+	P1 = karatsuba_mul(Xl, Yl);
+	P1 = karatsuba_mul(Xr, Yr);
+	
+	for (int i = 0; i < k; ++i)
+	{
+		Xlr[i] = Xl[i] + Xr[i];
+		Ylr[i] = Yl[i] + Yr[i];
+	}
+	
+	P3 = karatsuba_mul(Xlr, Ylr);
+	
+	for (auto i = 0; i < len; ++i)
+		P3[i] -= P2[i] + P1[i];
+	
+	for (auto i = 0; i < len; ++i)
+		res[i] = P2[i];
+
+	for (auto i = len; i < 2 * len; ++i)
+		res[i] = P1[i - len];
+
+	for (auto i = k; i < len; ++i)
+		res[i] += P3[i - k];
+
+	return res;
+}
+
+bigint & bigint::operator*(const std::deque<int> &rhs)
+{
+	*this = karatsuba_mul(deq, rhs);
+	return *this;
+}
+/*
 bigint & bigint::operator*(int rhs)
 {
 
@@ -291,7 +355,7 @@ bigint & bigint::operator*(const bigint &rhs)
 
 }
 
-bigint & bigint::operator*=(const std::deque<int> &rhs);
+bigint & bigint::operator*=(const std::deque<int> &rhs)
 {
 	return *this * rhs;
 }
@@ -333,7 +397,7 @@ bigint & bigint::operator/(const bigint &rhs)
 
 bigint & bigint::operator/=(const std::deque<int> &)
 {
-
+	return *this / rhs;
 }
 
 bigint & bigint::operator/=(int rhs)
@@ -361,46 +425,45 @@ inline std::size_t bigint::size()const
 	return deq.size();
 }
 
-std::string & bigint::dtos(const std::deque<int> &_deq)const
-{
-	std::string* tmp = new std::string;
-	for (std::deque<int>::const_iterator cit = _deq.begin(); cit != _deq.end(); ++cit)
-	{
-		tmp->push_back(abs(*cit) + '0');
-		if (*cit < 0)
-			tmp->insert(tmp->begin(), '-');
-	}
-
-	return *tmp;
-}
-
-
 /**** Private functions ****/
 
-std::deque<int> & bigint::to_deque(int _val)const
+std::deque<int> bigint::to_deque(int _val)const
 {
-	std::deque<int>* tmp = new std::deque<int>;
+	std::deque<int> tmp;
 	int dig;
 	while (_val != 0)
 	{
 		dig = _val % 10;
 		_val = _val / 10;
-		tmp->push_front(dig);
+		tmp.push_front(dig);
 	}
 	
-	return *tmp;
+	return tmp;
 }
 
-std::deque<int> & bigint::to_deque(const std::string &_str)const
+std::deque<int> bigint::to_deque(const std::string &_str)const
 {
-	std::deque<int>* tmp = new std::deque<int>;
+	std::deque<int> tmp;
 	for (std::string::const_reverse_iterator crit = _str.rbegin(); crit != _str.rend(); ++crit)
 	{
-		if (*crit == '-') { tmp->front() *= -1; continue; }
-		tmp->push_front(*crit - '0');
+		if (*crit == '-') { tmp.front() *= -1; continue; }
+		tmp.push_front(*crit - '0');
 	}
 
-	return *tmp;
+	return tmp;
+}
+
+std::string bigint::dtos(const std::deque<int> &_deq)const
+{
+	std::string tmp;
+	for (std::deque<int>::const_iterator cit = _deq.begin(); cit != _deq.end(); ++cit)
+	{
+		tmp.push_back(abs(*cit) + '0');
+		if (*cit < 0)
+			tmp.insert(tmp.begin(), '-');
+	}
+
+	return tmp;
 }
 
 void bigint::align(std::deque<int> &lhs, std::deque<int> &rhs)
