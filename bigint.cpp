@@ -293,7 +293,6 @@ std::deque<int> bigint::karatsuba_mul(const std::deque<int> &lhs, const std::deq
 	
 	if (len <= 1)
 		 return naive_mul(lhs, rhs);
-
 	
 	int k = len / 2;
 
