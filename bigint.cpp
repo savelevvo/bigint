@@ -52,6 +52,13 @@ bigint & bigint::operator=(const bigint &rhs)
 bigint & bigint::operator+(const std::deque<int> &rhs)
 {
 	std::deque<int> tmp(rhs), res;
+	bool negative = false;
+	if (deq.front() < 0 && rhs.front() < 0)
+	{
+		tmp.front() = abs(tmp.front());
+		deq.front() = abs(deq.front());
+		negative = true;
+	}
 	if (deq.size() != rhs.size()) align(deq, tmp);
 
 	bool resid = false;
@@ -77,6 +84,7 @@ bigint & bigint::operator+(const std::deque<int> &rhs)
 			res.push_front(sum);
 	}
 	deq = res;
+	if (negative) deq.front() *= -1;
 	return *this;
 }
 
@@ -156,6 +164,13 @@ bigint & bigint::operator-(const std::deque<int> &rhs)
 	if (*this < tmp)
 	{
 		deq.swap(tmp);
+		if (tmp.front() < 0)
+		{
+			tmp.front() = abs(tmp.front());
+			*this += tmp;
+			deq.front() *= -1;
+			return *this;
+		}
 		negative = true;
 	}
 	
