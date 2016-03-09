@@ -6,9 +6,11 @@
 #endif
 
 #include<iostream>
+#include<algorithm>
 #include<deque>
 #include<string>
 #include<stdlib.h>
+#include<math.h>
 
 class bigint
 {
@@ -59,9 +61,6 @@ public:
 	bigint & operator--();
 	bigint & operator--(int);
 
-	std::deque<int> naive_mul(const std::deque<int>&, const std::deque<int>&);
-	std::deque<int> karatsuba_mul(const std::deque<int> &, const std::deque<int> &);
-
 	bigint & operator*(const std::deque<int> &);
 	bigint & operator*(int);
 	bigint & operator*(const std::string &);
@@ -93,6 +92,8 @@ private:
 	std::string dtos(const std::deque<int> &)const;// deque to string
 
 	void align(std::deque<int> &, std::deque<int> &);
+
+	std::deque<int> karatsuba_mul(const std::deque<int> &, const std::deque<int> &);
 	
 };
 

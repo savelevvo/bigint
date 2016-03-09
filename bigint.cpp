@@ -286,71 +286,11 @@ bigint & bigint::operator--(int)
 	return *tmp;
 }
 
-
-std::deque<int> bigint::naive_mul(const std::deque<int>& x, const std::deque<int>& y) 
-{
-	auto len = x.size();
-	std::deque<int> res(2 * len);
-
-	for (auto i = 0; i < len; ++i) {
-		for (auto j = 0; j < len; ++j) {
-			res[i + j] += x[i] * y[j];
-		}
-	}
-
-	return res;
-}
-
-std::deque<int> bigint::karatsuba_mul(const std::deque<int> &lhs, const std::deque<int> &rhs)
-{
-	std::size_t n = (lhs.size() > rhs.size()) ? lhs.size() : rhs.size();
-	auto len = lhs.size(); 
-	
-	if (len <= 1)
-		 return naive_mul(lhs, rhs);
-	
-	int k = len / 2;
-
-	std::deque<int> res(2 * len);
-	std::deque<int> Xl, Xr, Yl, Yr;
-	std::deque<int> P1, P2, P3;
-	std::deque<int> Xlr(k), Ylr(k);
-
-	Xr.assign(lhs.begin() + k, lhs.end());
-	Xl.assign(lhs.begin(), lhs.begin() + k);
-	Yr.assign(rhs.begin() + k, rhs.end());
-	Yl.assign(rhs.begin(), rhs.begin() + k);
-	
-	
-	P1 = karatsuba_mul(Xl, Yl);
-	P1 = karatsuba_mul(Xr, Yr);
-	
-	for (int i = 0; i < k; ++i)
-	{
-		Xlr[i] = Xl[i] + Xr[i];
-		Ylr[i] = Yl[i] + Yr[i];
-	}
-	
-	P3 = karatsuba_mul(Xlr, Ylr);
-	
-	for (auto i = 0; i < len; ++i)
-		P3[i] -= P2[i] + P1[i];
-	
-	for (auto i = 0; i < len; ++i)
-		res[i] = P2[i];
-
-	for (auto i = len; i < 2 * len; ++i)
-		res[i] = P1[i - len];
-
-	for (auto i = k; i < len; ++i)
-		res[i] += P3[i - k];
-
-	return res;
-}
-
 bigint & bigint::operator*(const std::deque<int> &rhs)
 {
-	*this = karatsuba_mul(deq, rhs);
+	std::deque<int> tmp(rhs);
+	align(deq, tmp);
+	*this = karatsuba_mul(deq, tmp);
 	return *this;
 }
 /*
@@ -492,6 +432,56 @@ void bigint::align(std::deque<int> &lhs, std::deque<int> &rhs)
 	min->insert(min->begin(), (max->size() - min->size()), 0);
 }
 
+std::deque<int> bigint::karatsuba_mul(const std::deque<int> &lhs, const std::deque<int> &rhs)
+{
+	auto n = std::max(lhs.size(), rhs.size());
+
+	if (n == 1)
+		return to_deque(lhs[0] * rhs[0]);
+
+	auto len = lhs.size();
+	int k = len / 2;
+
+	std::deque<int> res;
+	std::deque<int> Xl, Xr, Yl, Yr;
+	std::deque<int> P1, P2, P3;
+	std::deque<int> Xlr(k), Ylr(k);
+
+	Xr.assign(lhs.begin() + k, lhs.end());
+	Xl.assign(lhs.begin(), lhs.begin() + k);
+	Yr.assign(rhs.begin() + k, rhs.end());
+	Yl.assign(rhs.begin(), rhs.begin() + k);
+
+	P1 = karatsuba_mul(Xl, Yl);
+	P2 = karatsuba_mul(Xr, Yr);
+
+	for (int i = 0; i < k; ++i)
+	{
+		Xlr[i] = Xl[i] + Xr[i];
+		Ylr[i] = Yl[i] + Yr[i];
+	}
+
+	P3 = karatsuba_mul(Xlr, Ylr);
+
+	//P1 * 10 ^ n + (P3 - P1 - P2) * 10 ^ (n / 2) + P2
+	res = to_deque(P1[0] * std::pow(10, n) + (P3 - P1 - P2) * pow(10, n / 2) + P2[0]);
+
+
+	/*
+	for (std::size_t i = 0; i < len; ++i)
+		P3[i] -= P2[i] + P1[i];
+
+	for (std::size_t i = 0; i < len; ++i)
+		res[i] = P2[i];
+
+	for (std::size_t i = len; i < 2 * len; ++i)
+		res[i] = P1[i - len];
+
+	for (std::size_t i = k; i < len; ++i)
+		res[i] += P3[i - k];
+	*/
+	return res;
+}
 
 /**** Non-member functions ****/
 
